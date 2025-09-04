@@ -1,11 +1,13 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/main.js",
+  "types": "dist/trpc/index.d.ts",
   "scripts": {
     "build": "tsc",
     "start": "node dist/main",
     "start:dev": "tsc --watch & nodemon dist/main.js",
+    "check": "tsc --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,11 +19,15 @@
     "@nestjs/core": "^11.1.6",
     "@nestjs/mongoose": "^11.0.3",
     "@nestjs/platform-express": "^11.1.6",
+    "@trpc/server": "^11.5.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "mongoose": "^8.18.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "zod": "^4.1.5"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.10",

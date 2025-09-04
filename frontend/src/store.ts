@@ -1,9 +1,9 @@
 import { createSignal, createResource } from 'solid-js';
-import { Todo, CreateTodoDto, UpdateTodoDto } from './types';
-import { todoAPI } from './api';
+import { CreateTodoDto, UpdateTodoDto } from './types';
+import { trpc, Todo } from './trpc';
 
 const [todos, { mutate: setTodos, refetch: refetchTodos }] = createResource(
-  () => todoAPI.getTodos()
+  () => trpc.todo.list.query()
 );
 
 const [isLoading, setIsLoading] = createSignal(false);
@@ -16,8 +16,8 @@ export const todoStore = {
   async addTodo(todoData: CreateTodoDto) {
     setIsLoading(true);
     try {
-      const newTodo = await todoAPI.createTodo(todoData);
-      setTodos(prev => prev ? [...prev, newTodo] : [newTodo]);
+      const newTodo = await trpc.todo.create.mutate(todoData);
+      setTodos((prev: Todo[] | undefined) => prev ? [...prev, newTodo] : [newTodo]);
       return newTodo;
     } catch (error) {
       console.error('Error adding todo:', error);
@@ -30,9 +30,9 @@ export const todoStore = {
   async updateTodo(id: string, updates: UpdateTodoDto) {
     setIsLoading(true);
     try {
-      const updatedTodo = await todoAPI.updateTodo(id, updates);
-      setTodos(prev => 
-        prev ? prev.map(todo => todo._id === id ? updatedTodo : todo) : []
+      const updatedTodo = await trpc.todo.update.mutate({ id, data: updates });
+      setTodos((prev: Todo[] | undefined) => 
+        prev ? prev.map((todo: Todo) => todo._id === id ? updatedTodo : todo) : []
       );
       return updatedTodo;
     } catch (error) {
@@ -46,8 +46,8 @@ export const todoStore = {
   async deleteTodo(id: string) {
     setIsLoading(true);
     try {
-      await todoAPI.deleteTodo(id);
-      setTodos(prev => prev ? prev.filter(todo => todo._id !== id) : []);
+      await trpc.todo.delete.mutate({ id });
+      setTodos((prev: Todo[] | undefined) => prev ? prev.filter((todo: Todo) => todo._id !== id) : []);
     } catch (error) {
       console.error('Error deleting todo:', error);
       throw error;
@@ -57,7 +57,7 @@ export const todoStore = {
   },
 
   async toggleTodo(id: string) {
-    const todo = todos()?.find(t => t._id === id);
+    const todo = todos()?.find((t: Todo) => t._id === id);
     if (todo) {
       await this.updateTodo(id, { completed: !todo.completed });
     }

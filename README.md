@@ -1,6 +1,6 @@
 # SolidJS + NestJS + MongoDB Todo App
 
-A modern full-stack todo application built with SolidJS frontend, NestJS backend, and MongoDB database.
+A full-stack todo application created to familiarize myself with NestJS, SolidJS, tRPC and MongoDB.
 
 ## Architecture
 
@@ -15,22 +15,7 @@ A modern full-stack todo application built with SolidJS frontend, NestJS backend
 
 ## Getting Started
 
-### 1. Start MongoDB
-
-Make sure MongoDB is running on your system:
-
-```bash
-# On macOS with Homebrew
-brew services start mongodb/brew/mongodb-community
-
-# On Ubuntu/Debian
-sudo systemctl start mongod
-
-# Or run directly
-mongod --dbpath /path/to/your/db
-```
-
-### 2. Start the Backend
+### 1. Start the Backend
 
 ```bash
 cd backend
@@ -41,7 +26,7 @@ npm run start:dev
 
 Backend will be available at http://localhost:3001
 
-### 3. Start the Frontend
+### 2. Start the Frontend
 
 ```bash
 cd frontend
@@ -57,7 +42,7 @@ Frontend will be available at http://localhost:3000
 - ✅ Mark todos as complete/incomplete
 - ✅ Delete todos
 - ✅ Real-time updates with SolidJS reactivity
-- ✅ Beautiful, responsive UI
+- ✅ Responsive UI
 - ✅ TypeScript throughout the stack
 
 ## API Endpoints
@@ -83,4 +68,71 @@ Frontend will be available at http://localhost:3000
     │   ├── App.tsx
     │   └── main.tsx
     └── package.json
+```
+
+
+```mermaid
+graph TD
+    subgraph "Frontend Layer - SolidJS"
+        UI[UI Components]
+        AddTodo[AddTodo Component]
+        TodoList[TodoList Component]
+        TodoItem[TodoItem Component]
+        
+        Store[Todo Store<br/>Signals & Resources]
+        tRPCClient[tRPC Client<br/>Type-safe API calls]
+        Types[Shared Types<br/>from Backend]
+    end
+    
+    subgraph "Backend Layer - NestJS"
+        tRPCMiddleware[tRPC Express Middleware<br/>/trpc/*]
+        Router[tRPC App Router]
+        TodoRouter[Todo Router<br/>Procedures]
+        Service[Todo Service<br/>Business Logic]
+        Schemas[Zod Schemas<br/>Runtime Validation]
+        MongooseSchema[Todo Schema<br/>Mongoose Model]
+    end
+    
+    subgraph "Database Layer - MongoDB"
+        Collection[Todos Collection<br/>solid-nest-todo]
+        Document[Todo Documents<br/>_id, title, description<br/>completed, timestamps]
+    end
+    
+    %% User Interactions
+    User((User)) --> UI
+    UI --> AddTodo
+    UI --> TodoList
+    TodoList --> TodoItem
+    
+    %% Frontend Data Flow
+    AddTodo -->|createSignal| Store
+    TodoItem -->|toggle/delete| Store
+    Store -->|Type-safe tRPC calls| tRPCClient
+    tRPCClient -->|Auto-typed responses| Store
+    Store -->|createResource| TodoList
+    
+    %% Type Safety
+    Types -->|Import types| Store
+    Types -->|Import types| tRPCClient
+    
+    %% tRPC Communication
+    tRPCClient -->|POST /trpc/todo.list<br/>POST /trpc/todo.create<br/>POST /trpc/todo.update<br/>POST /trpc/todo.delete| tRPCMiddleware
+    tRPCMiddleware -->|Type-safe response| tRPCClient
+    
+    %% Backend Data Flow
+    tRPCMiddleware --> Router
+    Router --> TodoRouter
+    TodoRouter -->|Input validation| Schemas
+    Schemas -->|Validated data| Service
+    Service -->|Database operations| MongooseSchema
+    MongooseSchema -->|Mongoose queries| Collection
+    Collection -->|Documents| MongooseSchema
+    MongooseSchema -->|Mapped objects| Service
+    Service -->|Type-safe results| TodoRouter
+    TodoRouter -->|Procedure response| Router
+    Router --> tRPCMiddleware
+    
+    %% Database Operations
+    Collection --> Document
+    Document --> Collection
 ```
