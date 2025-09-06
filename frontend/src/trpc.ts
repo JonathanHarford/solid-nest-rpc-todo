@@ -1,5 +1,5 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
-import type { AppRouter, Todo, CreateTodoInput, UpdateTodoInput } from 'backend';
+import type { AppRouter, Todo, CreateTodoInput, UpdateTodoInput } from 'backend/index';
 
 // Re-export types for convenience
 export type { Todo, CreateTodoInput, UpdateTodoInput };
