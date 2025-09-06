@@ -1,6 +1,5 @@
 import { createSignal, createResource } from 'solid-js';
-import { CreateTodoDto, UpdateTodoDto } from './types';
-import { trpc, Todo } from './trpc';
+import { trpc, Todo, CreateTodoInput, UpdateTodoInput } from './trpc';
 
 const [todos, { mutate: setTodos, refetch: refetchTodos }] = createResource(
   () => trpc.todo.list.query()
@@ -13,7 +12,7 @@ export const todoStore = {
   isLoading,
   refetchTodos,
 
-  async addTodo(todoData: CreateTodoDto) {
+  async addTodo(todoData: CreateTodoInput) {
     setIsLoading(true);
     try {
       const newTodo = await trpc.todo.create.mutate(todoData);
@@ -27,7 +26,7 @@ export const todoStore = {
     }
   },
 
-  async updateTodo(id: string, updates: UpdateTodoDto) {
+  async updateTodo(id: string, updates: UpdateTodoInput) {
     setIsLoading(true);
     try {
       const updatedTodo = await trpc.todo.update.mutate({ id, data: updates });

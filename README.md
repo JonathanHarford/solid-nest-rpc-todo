@@ -35,41 +35,7 @@ npm run dev
 ```
 
 Frontend will be available at http://localhost:3000
-
-## Features
-
-- ✅ Add new todos with title and description
-- ✅ Mark todos as complete/incomplete
-- ✅ Delete todos
-- ✅ Real-time updates with SolidJS reactivity
-- ✅ Responsive UI
-- ✅ TypeScript throughout the stack
-
-## API Endpoints
-
-- `GET /todos` - Get all todos
-- `POST /todos` - Create a new todo
-- `GET /todos/:id` - Get a specific todo
-- `PATCH /todos/:id` - Update a todo
-- `DELETE /todos/:id` - Delete a todo
-
-## Project Structure
-
-```
-├── backend/          # NestJS backend
-│   ├── src/
-│   │   ├── todo/     # Todo module
-│   │   ├── app.module.ts
-│   │   └── main.ts
-│   └── package.json
-└── frontend/         # SolidJS frontend
-    ├── src/
-    │   ├── components/
-    │   ├── App.tsx
-    │   └── main.tsx
-    └── package.json
-```
-
+## Architecture
 
 ```mermaid
 graph TD

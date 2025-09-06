@@ -1,4 +1,4 @@
-import { Todo } from '../types';
+import { Todo } from '../trpc';
 import { todoStore } from '../store';
 
 interface TodoItemProps {
